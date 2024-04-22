@@ -1,6 +1,7 @@
 package com.example.restappws.ui.controller;
 
 import com.example.restappws.ui.model.response.UserRest;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,7 +13,7 @@ public class UserController {
         return "get users called with page = " + page + ", limit = " + limit + " and sort = " + sort;
     }
 
-    @GetMapping(path = "/{userId}")
+    @GetMapping(path = "/{userId}", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public UserRest getUser(@PathVariable String userId) {
         UserRest userData = new UserRest();
         userData.setFirstName("Akash");
