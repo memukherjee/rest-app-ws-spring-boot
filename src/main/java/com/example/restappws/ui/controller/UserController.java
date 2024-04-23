@@ -58,8 +58,9 @@ public class UserController {
         return new ResponseEntity<>(storedUserDetails, HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public String deleteUser() {
-        return "delete User";
+    @DeleteMapping(path = "/{userId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<Void> deleteUser(@PathVariable String userId) {
+        users.remove(userId);
+        return ResponseEntity.noContent().build();
     }
 }
