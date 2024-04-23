@@ -1,23 +1,23 @@
 package com.example.restappws.ui.controller;
 
+import com.example.restappws.service.userservice.UserService;
 import com.example.restappws.ui.model.request.UpdateUserDetailsRequestModel;
 import com.example.restappws.ui.model.request.UserDetailsRequestModel;
 import com.example.restappws.ui.model.response.UserRest;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    Map<String, UserRest> users;
+    @Autowired
+    UserService userService;
 
     @GetMapping
     public String getUsers(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "limit", defaultValue = "20") int limit, @RequestParam(value = "sort", defaultValue = "desc", required = false) String sort) {
@@ -26,41 +26,28 @@ public class UserController {
 
     @GetMapping(path = "/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<UserRest> getUser(@PathVariable String userId) {
-        if (users.containsKey(userId)) {
-            UserRest fetchedUserDetails = users.get(userId);
+            UserRest fetchedUserDetails = userService.getUserById(userId);
+            if(fetchedUserDetails == null) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
             return new ResponseEntity<>(fetchedUserDetails, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
     }
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<UserRest> createUser(@Valid @RequestBody UserDetailsRequestModel userDetails) {
-        UserRest returnValue = new UserRest();
-        String userId = UUID.randomUUID().toString();
-        returnValue.setUserId(userId);
-        returnValue.setFirstName(userDetails.getFirstName());
-        returnValue.setLastName(userDetails.getLastName());
-        returnValue.setEmail(userDetails.getEmail());
-
-        if (users == null) users = new HashMap<>();
-        users.put(userId, returnValue);
-
+        UserRest returnValue = userService.createUser(userDetails);
         return new ResponseEntity<>(returnValue, HttpStatus.OK);
     }
 
     @PutMapping(path = "/{userId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<UserRest> updateUser(@PathVariable String userId, @Valid @RequestBody UpdateUserDetailsRequestModel userDetails) {
-        UserRest storedUserDetails = users.get(userId);
-        storedUserDetails.setFirstName(userDetails.getFirstName());
-        storedUserDetails.setLastName(userDetails.getLastName());
-        users.put(userId, storedUserDetails);
-        return new ResponseEntity<>(storedUserDetails, HttpStatus.OK);
+        UserRest updatedUserDetails = userService.updateUser(userId, userDetails);
+        return new ResponseEntity<>(updatedUserDetails, HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/{userId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteUser(@PathVariable String userId) {
-        users.remove(userId);
+        userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
 }
