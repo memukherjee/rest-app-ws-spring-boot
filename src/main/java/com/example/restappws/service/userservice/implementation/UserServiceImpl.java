@@ -1,19 +1,27 @@
 package com.example.restappws.service.userservice.implementation;
 
 import com.example.restappws.service.userservice.UserService;
+import com.example.restappws.shared.Utils;
 import com.example.restappws.ui.model.request.UpdateUserDetailsRequestModel;
 import com.example.restappws.ui.model.request.UserDetailsRequestModel;
 import com.example.restappws.ui.model.response.UserRest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    Map<String, UserRest> users;
+    private Map<String, UserRest> users;
+
+    private final Utils utils;
+
+    @Autowired
+    public UserServiceImpl(Utils utils) {
+        this.utils = utils;
+    }
 
     @Override
     public UserRest getUserById(String id) {
@@ -26,7 +34,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserRest createUser(UserDetailsRequestModel userDetails) {
         UserRest returnValue = new UserRest();
-        String userId = UUID.randomUUID().toString();
+        String userId = utils.generateUserId();
         returnValue.setUserId(userId);
         returnValue.setFirstName(userDetails.getFirstName());
         returnValue.setLastName(userDetails.getLastName());
