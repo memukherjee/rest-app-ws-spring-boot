@@ -1,5 +1,6 @@
 package com.example.restappws.ui.controller;
 
+import com.example.restappws.ui.model.request.UpdateUserDetailsRequestModel;
 import com.example.restappws.ui.model.request.UserDetailsRequestModel;
 import com.example.restappws.ui.model.response.UserRest;
 import jakarta.validation.Valid;
@@ -26,7 +27,8 @@ public class UserController {
     @GetMapping(path = "/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<UserRest> getUser(@PathVariable String userId) {
         if (users.containsKey(userId)) {
-            return new ResponseEntity<>(users.get(userId), HttpStatus.OK);
+            UserRest fetchedUserDetails = users.get(userId);
+            return new ResponseEntity<>(fetchedUserDetails, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -47,9 +49,13 @@ public class UserController {
         return new ResponseEntity<>(returnValue, HttpStatus.OK);
     }
 
-    @PutMapping
-    public String updateUser() {
-        return "update User";
+    @PutMapping(path = "/{userId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<UserRest> updateUser(@PathVariable String userId, @Valid @RequestBody UpdateUserDetailsRequestModel userDetails) {
+        UserRest storedUserDetails = users.get(userId);
+        storedUserDetails.setFirstName(userDetails.getFirstName());
+        storedUserDetails.setLastName(userDetails.getLastName());
+        users.put(userId, storedUserDetails);
+        return new ResponseEntity<>(storedUserDetails, HttpStatus.OK);
     }
 
     @DeleteMapping
