@@ -23,10 +23,10 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(value = NullPointerException.class)
-    public ResponseEntity<ErrorMessage> handleNullPointerExceptions(NullPointerException exception, WebRequest request) {
+    @ExceptionHandler(value = {NullPointerException.class, ArithmeticException.class })
+    public ResponseEntity<ErrorMessage> handleSpecificExceptions(Exception exception, WebRequest request) {
         Date currentTimestamp = new Date();
-        String errorMessageDescription = "Null pointer exception occurred";
+        String errorMessageDescription = "Exception occurred: "+exception.getLocalizedMessage();
         ErrorMessage errorMessage = new ErrorMessage(currentTimestamp, errorMessageDescription);
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
