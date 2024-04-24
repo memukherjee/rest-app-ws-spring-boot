@@ -33,20 +33,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserRest createUser(UserDetailsRequestModel userDetails) {
-        UserRest returnValue = new UserRest();
+        UserRest newUser = new UserRest();
         String userId = utils.generateUserId();
-        returnValue.setUserId(userId);
-        returnValue.setFirstName(userDetails.getFirstName());
-        returnValue.setLastName(userDetails.getLastName());
-        returnValue.setEmail(userDetails.getEmail());
+        newUser.setUserId(userId);
+        newUser.setFirstName(userDetails.getFirstName());
+        newUser.setLastName(userDetails.getLastName());
+        newUser.setEmail(userDetails.getEmail());
 
         if (users == null) users = new HashMap<>();
-        users.put(userId, returnValue);
-        return returnValue;
+        users.put(userId, newUser);
+        return newUser;
     }
 
     @Override
     public UserRest updateUser(String userId, UpdateUserDetailsRequestModel userDetails) {
+        if(users==null || !users.containsKey(userId)) {
+            return null;
+        }
+
         UserRest storedUserDetails = users.get(userId);
         storedUserDetails.setFirstName(userDetails.getFirstName());
         storedUserDetails.setLastName(userDetails.getLastName());
