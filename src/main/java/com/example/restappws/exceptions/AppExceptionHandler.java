@@ -47,6 +47,6 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         Date currentTimestamp = new Date();
         String errorMessageDescription = "UserServiceException: "+exception.getMessage();
         ErrorMessage errorMessage = new ErrorMessage(currentTimestamp, errorMessageDescription);
-        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 }

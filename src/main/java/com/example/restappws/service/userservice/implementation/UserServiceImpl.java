@@ -1,5 +1,6 @@
 package com.example.restappws.service.userservice.implementation;
 
+import com.example.restappws.exceptions.UserServiceException;
 import com.example.restappws.service.userservice.UserService;
 import com.example.restappws.shared.Utils;
 import com.example.restappws.ui.model.request.UpdateUserDetailsRequestModel;
@@ -33,6 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserRest createUser(UserDetailsRequestModel userDetails) {
+
         UserRest newUser = new UserRest();
         String userId = utils.generateUserId();
         newUser.setUserId(userId);
@@ -41,6 +43,10 @@ public class UserServiceImpl implements UserService {
         newUser.setEmail(userDetails.getEmail());
 
         if (users == null) users = new HashMap<>();
+        boolean isUniqueUser = newUser.isUnique(users.values().stream().toList());
+        if(!isUniqueUser) {
+            throw new UserServiceException("Please use another email id. User is already present with this email id");
+        }
         users.put(userId, newUser);
         return newUser;
     }
