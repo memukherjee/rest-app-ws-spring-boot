@@ -1,9 +1,11 @@
 package com.example.restappws.ui.model.request;
 
+import com.example.restappws.validations.ValidEmail;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
+//Make users unique
 public class UserDetailsRequestModel {
     @NotNull(message = "First name can not be empty")
     @Size(min=2, message = "First name must be at least 2 characters long")
@@ -14,7 +16,9 @@ public class UserDetailsRequestModel {
     private String lastName;
 
     @NotNull(message = "Email can not be empty")
-    @Email(message = "Not a valid email")
+//    @Email(message = "Not a valid email")
+//    @Pattern(regexp = "^[A-Za-z0-9+_.-]+@(.+)$", message = "Not a valid email")
+    @ValidEmail
     private String email;
 
     @NotNull(message = "Password can not be empty")
